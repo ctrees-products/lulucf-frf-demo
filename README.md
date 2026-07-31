@@ -27,6 +27,16 @@ Positive means a **sink** (carbon moving out of the atmosphere into forests). No
 EPA and the Forest Service both publish the opposite sign convention — see
 [Sign and units](#sign-and-units-read-this-before-using-the-numbers).
 
+**Which federal publication is the benchmark here.** The comparison above is against
+**Walters et al. 2026** (Research Data Archive
+[RDS-2026-0031](https://doi.org/10.2737/RDS-2026-0031)), because that is the release
+carrying *per-state* estimates with *quantitative uncertainty* — both of which this
+comparison needs — and its reporting series runs through **2023**, matching our estimate
+year. The Forest Service's current forest-sector publication is **Domke et al. 2026**
+(Resource Bulletin [WO-103](https://doi.org/10.2737/WO-RB-103)), whose series runs through
+2024; it is the authoritative narrative record, but a year ahead of the 2023 comparison
+made here. Both are credited in full under [Credit](#credit).
+
 A secondary cross-check against EPA's Annex 3.13 Table A-208 for **2022** — one year
 earlier, the most recent *published* EPA table — gives **+5.9%**. That figure is
 **versus EPA's 2022 table, not versus Walters**; most of the gap is the one-year
