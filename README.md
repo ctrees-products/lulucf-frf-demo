@@ -222,4 +222,17 @@ Data tables in `data/`: **CC BY 4.0** — see [LICENSE-data](LICENSE-data). The 
 federal reference tables are U.S. Government works, redistributed here unmodified except
 for reshaping into CSV; cite the original sources above.
 
-Produced by [CTrees](https://ctrees.org).
+## Contact
+
+Produced by **[CTrees](https://ctrees.org)**, a nonprofit science organization that
+measures and tracks carbon in forests and other land ecosystems worldwide.
+
+- **Questions about the numbers, the methods, or the comparison in this repository** —
+  [open an issue](https://github.com/ctrees-products/lulucf-frf-demo/issues). Public and
+  tracked, so the answer is available to the next person asking the same thing.
+- **Web** — [ctrees.org](https://ctrees.org)
+- **LinkedIn** — [linkedin.com/company/ctrees](https://www.linkedin.com/company/ctrees)
+
+If you work on a state greenhouse gas inventory and want to talk through how this compares
+to your own forest-land numbers — including the states where we *don't* agree with the
+published record — an issue is a good place to start that conversation.
