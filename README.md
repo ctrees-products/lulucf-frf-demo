@@ -199,6 +199,12 @@ that science in front of more people.
 - **pyfia** — https://github.com/mihiarc/pyfia — the open FIA estimation library
   underneath this work.
 
+## Funding
+
+This work is supported by **[Schmidt Sciences](https://www.schmidtsciences.org/)**.
+Publishing the methods and results openly is itself a deliverable of that support — which
+is why this repository exists ahead of the estimator's own release.
+
 ## License
 
 Code (notebooks, scripts): **MIT** — see [LICENSE](LICENSE).
