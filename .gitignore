@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Notebook / R scratch
+.ipynb_checkpoints/
+.Rhistory
+.RData
+.Rproj.user/
+*_cache/
+*_files/
+*.html
+
+# Local environment — never commit database paths or credentials
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db

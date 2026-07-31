@@ -1,0 +1,6 @@
+# Everything in this repository runs on these two libraries plus a notebook host.
+pandas>=2.0
+matplotlib>=3.7
+
+# To open notebooks/frf_validation_demo.ipynb:
+jupyterlab>=4.0

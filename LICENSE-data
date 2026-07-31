@@ -1,0 +1,29 @@
+Data files in `data/` are licensed under the Creative Commons Attribution 4.0
+International License (CC BY 4.0).
+
+  https://creativecommons.org/licenses/by/4.0/
+
+You are free to share and adapt these tables for any purpose, including
+commercially, provided you give appropriate credit.
+
+Attribution for `forest_carbon_flux_ci.csv` (estimates produced by CTrees):
+
+  CTrees. 2026. Independent per-state reproduction of Forest Land Remaining
+  Forest Land carbon flux with 95% confidence intervals, 2023.
+  https://github.com/ctrees-products/lulucf-frf-demo
+
+The other two tables are reproductions of published U.S. Government works and
+are not subject to copyright in the United States. They are redistributed here
+unmodified except for reshaping into CSV. Cite the original sources, not this
+repository:
+
+  walters_2026_frf_net_flux_2023.csv
+    Walters, B.F.; Domke, G.M.; Greenfield, E.J.; Smith, J.E.; Ogle, S.M.;
+    Knott, J.A. 2026. Greenhouse gas emissions and removals from forest land,
+    woodlands, urban trees, and harvested wood products in the United States,
+    1990-2023. Fort Collins, CO: Forest Service Research Data Archive.
+    https://doi.org/10.2737/RDS-2026-0031
+
+  epa_a208_2022.csv
+    U.S. Environmental Protection Agency. Inventory of U.S. Greenhouse Gas
+    Emissions and Sinks, Annex 3.13, Table A-208.

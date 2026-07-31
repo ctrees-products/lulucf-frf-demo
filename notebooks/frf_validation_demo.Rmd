@@ -1,0 +1,219 @@
+---
+title: "Forest carbon in the U.S. GHG inventory — checking an independent reproduction"
+subtitle: "R version"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      fig.width = 7, fig.height = 7)
+```
+
+This is the R counterpart to `frf_validation_demo.ipynb`. It reproduces the same
+comparison and the same headline numbers using **base R only** — no Python, no
+`reticulate`, no packages to install.
+
+**What this notebook does and does not do.** It reads *finished* per-state estimates
+from `data/` and computes their agreement with the published Forest Service reference.
+It does **not** recompute those estimates from Forest Inventory and Analysis (FIA) plot
+data. The estimator is separate software, being prepared for public release as part of
+[pyfia](https://github.com/mihiarc/pyfia) in Q1 2027. "Reproduction" here means *the
+inventory's published numbers were reproduced independently*, not *this notebook re-runs
+our estimator*. The last section covers what pins each estimate to a re-runnable input.
+
+> **Sign and units.** Our estimates use **positive = sink**; the Forest Service and EPA
+> both publish **negative = sink**. Values are **MMT C** (million metric tons of carbon),
+> not CO₂ equivalent. The bundled Walters uncertainty file's headers read "MMT CO2 Eq."
+> but its values are actually MMT C — a mislabel in the source archive — so no CO₂→C
+> conversion is applied to it.
+
+## Load the bundled tables
+
+```{r load}
+# Locate data/ by walking upward, so this knits from notebooks/, from the repository
+# root, or from anywhere below it — the same strategy the Python notebook uses.
+find_data_dir <- function() {
+  for (p in c(".", "..", "../..", "../../..")) {
+    cand <- file.path(p, "data")
+    if (file.exists(file.path(cand, "forest_carbon_flux_ci.csv"))) return(cand)
+  }
+  stop("Could not find data/. Keep notebooks/ and data/ as siblings and run this ",
+       "document from inside the repository.")
+}
+data_dir <- find_data_dir()
+
+# Our estimates: positive = sink, MMT C/yr.
+ours <- read.csv(file.path(data_dir, "forest_carbon_flux_ci.csv"))
+
+# Primary reference. check.names = FALSE keeps the original column headers intact.
+wal <- read.csv(file.path(data_dir, "walters_2026_frf_net_flux_2023.csv"),
+                check.names = FALSE)
+
+# Secondary reference: EPA Annex 3.13 Table A-208 for 2022, one year earlier.
+epa <- read.csv(file.path(data_dir, "epa_a208_2022.csv"))
+
+cat(sprintf("our estimates: %d states, estimator build %s\n",
+            nrow(ours), ours$forest_carbon_version[1]))
+```
+
+## 1. Put both estimates on one sign convention
+
+The reference publishes negative = sink; we report positive = sink. Negating a flux flips
+the sign **and** swaps which bound is upper versus lower — forgetting the swap is the most
+common error when combining these tables.
+
+```{r reconcile}
+ref <- data.frame(
+  state_name = wal$State,
+  ref        = -wal$`2023 Flux Estimate (MMT CO2 Eq.)`,
+  # Upper and lower deliberately cross over: negating swaps the bounds.
+  ref_lo     = -wal$`Upper Bound (MMT CO2 Eq.)`,
+  ref_hi     = -wal$`Lower Bound (MMT CO2 Eq.)`
+)
+
+# Inner join keeps states present in both. The reference covers more geography than we
+# estimate (Alaska, Hawaii, territories), so those rows drop out here.
+df <- merge(ours, ref, by = "state_name")
+names(df)[names(df) == "point_mmt_c"]    <- "ours"
+names(df)[names(df) == "ci_lower_mmt_c"] <- "ours_lo"
+names(df)[names(df) == "ci_upper_mmt_c"] <- "ours_hi"
+
+# Two agreement tests: one strict, one deliberately coarse.
+df$in_band <- df$ours >= df$ref_lo & df$ours <= df$ref_hi
+df$overlap <- df$ours_lo <= df$ref_hi & df$ref_lo <= df$ours_hi
+
+cat(sprintf("matched states: %d\n", nrow(df)))
+head(df[, c("state", "ours", "ours_lo", "ours_hi", "ref", "ref_lo", "ref_hi",
+            "in_band", "overlap")])
+```
+
+## 2. The headline comparison
+
+Two different questions deserving different weight: whether our **point estimate falls
+inside the published band** is the stricter test; whether the two **intervals overlap** is
+deliberately coarse — two intervals can overlap while the point estimates differ
+substantially, and where the published interval is very wide, overlap is close to
+automatic. Read a high overlap count as *no gross disagreement*, not tight agreement.
+
+```{r headline}
+total_ours <- sum(df$ours)
+total_ref  <- sum(df$ref)
+pct        <- (total_ours - total_ref) / abs(total_ref) * 100
+
+cat(sprintf("%d-state total, 2023 (positive = sink, MMT C/yr)\n", nrow(df)))
+cat(sprintf("  this reproduction        : %+.1f\n", total_ours))
+cat(sprintf("  Forest Service published : %+.1f\n", total_ref))
+cat(sprintf("  difference               : %+.1f%%\n\n", pct))
+cat(sprintf("  point estimate inside the published 95%% band : %d / %d\n",
+            sum(df$in_band), nrow(df)))
+cat(sprintf("  95%% intervals overlap                        : %d / %d\n",
+            sum(df$overlap), nrow(df)))
+
+# Secondary cross-check against EPA's 2022 table. Different reference YEAR, so this is
+# not the headline agreement figure and is never a difference "versus Walters".
+e <- merge(ours, data.frame(state = epa$state, epa = -epa$flux_mmt_c_2022), by = "state")
+epa_pct <- (sum(e$point_mmt_c) - sum(e$epa)) / abs(sum(e$epa)) * 100
+cat(sprintf("\n  secondary, vs EPA A-208 for 2022: %+.1f vs %+.1f = %+.1f%%\n",
+            sum(e$point_mmt_c), sum(e$epa), epa_pct))
+cat("  (mostly the one-year reference offset, not an estimator difference)\n")
+```
+
+## 3. Agreement across all states
+
+Each point is one state. Bars are 95% confidence intervals on **both** axes, because both
+quantities are estimates carrying uncertainty — neither is ground truth. A point on the
+dashed line means the two estimates agree exactly.
+
+```{r scatter}
+OURS <- "#2a78d6"; INK <- "#52514e"
+lim <- c(min(df$ref_lo, df$ours_lo) - 1.5, max(df$ref_hi, df$ours_hi) + 1.5)
+
+par(mar = c(4.5, 4.5, 3, 1), col.axis = INK, col.lab = INK)
+plot(NA, xlim = lim, ylim = lim, asp = 1, las = 1,
+     xlab = "Forest Service published estimate (MMT C/yr)",
+     ylab = "This reproduction (MMT C/yr)",
+     main = sprintf("%d states, %d/%d intervals overlap, totals differ %+.1f%%",
+                    nrow(df), sum(df$overlap), nrow(df), pct),
+     cex.main = 0.95, font.main = 1)
+grid(col = "#e3e2de", lty = 1)
+abline(0, 1, lty = 2, col = INK)
+
+# Interval bars first so the point markers sit on top of them.
+segments(df$ref_lo, df$ours, df$ref_hi, df$ours,
+         col = adjustcolor(OURS, alpha.f = 0.32))
+segments(df$ref, df$ours_lo, df$ref, df$ours_hi,
+         col = adjustcolor(OURS, alpha.f = 0.32))
+# A white ring keeps overlapping points readable in the dense cluster.
+points(df$ref, df$ours, pch = 21, bg = OURS, col = "white", cex = 0.95)
+legend("topleft", legend = "1:1 (exact agreement)", lty = 2, col = INK,
+       bty = "n", cex = 0.85)
+```
+
+## 4. Per-state detail
+
+"What does this say about *my* state?" is the question that matters most to an inventory
+team, so here is every state, sorted, with both intervals side by side.
+
+Where our interval is much **narrower** than the published one, that is not evidence we
+are more certain. Our uncertainty budget is incomplete — it excludes tree-biomass model
+(NSVB) parameter uncertainty, which drives most of the flux — so read the widths as a
+lower bound.
+
+```{r by_state, fig.height=11.5}
+REF <- "#eb6834"
+d <- df[order(df$ours), ]
+n <- nrow(d); y <- seq_len(n); off <- 0.19
+
+par(mar = c(4.5, 4, 3, 1), col.axis = INK, col.lab = INK)
+plot(NA, xlim = range(c(d$ours_lo, d$ours_hi, d$ref_lo, d$ref_hi)),
+     ylim = c(0.4, n + 0.6), yaxt = "n", las = 1,
+     xlab = "Net flux (MMT C/yr, positive = sink)", ylab = "",
+     main = sprintf("Every state with 95%% CIs, %d/%d of our points inside the published band",
+                    sum(df$in_band), nrow(df)),
+     cex.main = 0.9, font.main = 1)
+axis(2, at = y, labels = d$state, las = 1, cex.axis = 0.6, tick = FALSE)
+grid(col = "#e3e2de", lty = 1, ny = NA)
+abline(v = 0, col = INK, lwd = 0.8)
+
+segments(d$ours_lo, y + off, d$ours_hi, y + off, col = adjustcolor(OURS, alpha.f = 0.45))
+points(d$ours, y + off, pch = 21, bg = OURS, col = "white", cex = 0.8)
+segments(d$ref_lo, y - off, d$ref_hi, y - off, col = adjustcolor(REF, alpha.f = 0.45))
+points(d$ref, y - off, pch = 22, bg = REF, col = "white", cex = 0.8)
+
+legend("topleft", legend = c("This reproduction", "Forest Service published"),
+       pch = c(21, 22), pt.bg = c(OURS, REF), col = "white", bty = "o",
+       box.col = "#e3e2de", cex = 0.85)
+```
+
+The states where our point estimate falls **outside** the published band — where the
+interesting methodological questions live:
+
+```{r outside}
+out <- df[!df$in_band, c("state", "ours", "ours_lo", "ours_hi", "ref", "ref_lo", "ref_hi")]
+cat(sprintf("%d of %d states outside the published band:\n", nrow(out), nrow(df)))
+out[order(-out$ours), ]
+```
+
+## 5. Where these numbers came from, and how to re-run them
+
+This document deliberately does not hide that it read finished estimates from a file. What
+makes them checkable rather than merely asserted is that every row records the inputs that
+produced it:
+
+- **`evalid`** — the FIA evaluation identifier, naming the exact inventory cycle and plot
+  set behind the estimate, so each number is tied to a specific public input.
+- **`n_iter`** and **`seed`** — the bootstrap iteration count and random seed are fixed and
+  recorded, so the interval is reproducible rather than re-randomised on each run.
+- **`n_pairs`** — how many remeasured plot pairs support the estimate. Flux needs the same
+  plot measured twice, so this sits well below a state's total plot count, and it is the
+  honest denominator for how much data stands behind a state's number.
+
+The estimator consuming those inputs is being prepared for public release as part of
+**[pyfia](https://github.com/mihiarc/pyfia)** (MIT-licensed, already on PyPI), targeted for
+**Q1 2027**. At that point this pipeline becomes runnable end to end from public FIA data,
+and this comparison becomes a regression test on it rather than a summary of it.
+
+```{r provenance}
+head(ours[, c("state", "evalid", "n_pairs", "n_iter", "seed",
+              "perturb_litter", "perturb_soc", "forest_carbon_version")], 10)
+```
