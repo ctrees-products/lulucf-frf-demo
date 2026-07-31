@@ -74,15 +74,24 @@ in its 2.0 release.
 
 ## Quick start
 
+**Python:**
+
 ```bash
 pip install -r requirements.txt
-jupyter lab notebooks/frf_validation_demo.ipynb   # Python
-# or, in R:  rmarkdown::render("notebooks/frf_validation_demo.Rmd")
+jupyter lab notebooks/frf_validation_demo.ipynb
+```
+
+**R** — the analysis itself uses base R only (no Python, no `reticulate`, no packages).
+You only need `rmarkdown` plus a `pandoc` install to render the document to HTML:
+
+```r
+install.packages("rmarkdown")   # plus pandoc on your PATH, or run this inside RStudio
+rmarkdown::render("notebooks/frf_validation_demo.Rmd")
 ```
 
 Both notebooks recompute every headline number above from the bundled CSVs — nothing in
-them is hard-coded. The R version uses base R only for the comparison, so it needs no
-Python.
+them is hard-coded. Verified against Python 3.11+ / pandas 2 and R 4.5 / rmarkdown 2.31 /
+pandoc 3.10.
 
 ```
 data/    forest_carbon_flux_ci.csv          our per-state results + 95% CIs

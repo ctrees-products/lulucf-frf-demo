@@ -13,6 +13,9 @@ venv/
 *_cache/
 *_files/
 *.html
+# knitr intermediates, left behind only when a render aborts partway
+*.knit.md
+*.utf8.md
 
 # Local environment — never commit database paths or credentials
 .env
