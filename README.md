@@ -25,7 +25,7 @@ national greenhouse gas inventory.
 
 Positive means a **sink** (carbon moving out of the atmosphere into forests). Note that
 EPA and the Forest Service both publish the opposite sign convention — see
-[Sign and units](#sign-and-units-read-this-before-using-the-numbers).
+[Sign and units](#sign-and-units--read-this-before-using-the-numbers).
 
 **Which federal publication is the benchmark here.** The comparison above is against
 **Walters et al. 2026** (Research Data Archive

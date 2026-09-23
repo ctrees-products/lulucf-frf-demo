@@ -6,7 +6,7 @@ carbon), not CO₂ equivalent.
 
 Sign conventions differ between our file and the two reference files. This is the
 most common way to get a wrong answer from these tables — see the README's
-[Sign and units](../README.md#sign-and-units-read-this-before-using-the-numbers)
+[Sign and units](../README.md#sign-and-units--read-this-before-using-the-numbers)
 section before joining them to anything.
 
 ---
