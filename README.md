@@ -100,8 +100,8 @@ rmarkdown::render("notebooks/frf_validation_demo.Rmd")
 ```
 
 Both notebooks recompute every headline number above from the bundled CSVs — nothing in
-them is hard-coded. Verified against Python 3.11+ / pandas 2 and R 4.5 / rmarkdown 2.31 /
-pandoc 3.10.
+them is hard-coded. Verified against Python 3.11+ with pandas 2 or 3, and R 4.5 /
+rmarkdown 2.31 / pandoc 3.10.
 
 ```
 data/    forest_carbon_flux_ci.csv          our per-state results + 95% CIs
@@ -208,6 +208,9 @@ that science in front of more people.
   Annex 3.13.
 - **pyfia** — https://github.com/mihiarc/pyfia — the open FIA estimation library
   underneath this work.
+
+**How to cite this repository:** the metadata is in [`CITATION.cff`](CITATION.cff), and
+GitHub's **Cite this repository** link in the sidebar formats it as APA or BibTeX.
 
 ## Funding
 
