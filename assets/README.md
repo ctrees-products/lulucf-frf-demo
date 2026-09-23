@@ -9,3 +9,7 @@ It decodes reliably down to about 120 px, so keep it at roughly half an inch or
 larger on a slide and don't crop the white border — the quiet zone is part of the
 code, not padding. Regenerate with `segno.make(URL, error='m')` if the URL ever
 changes.
+
+`social-preview.png` — 1280×640 link-preview card (title, repository URL and the
+agreement plot, no headline numbers), uploaded in the repository's Settings under
+Social preview; GitHub does not read it from the tree.
