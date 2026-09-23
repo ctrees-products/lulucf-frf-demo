@@ -12,7 +12,6 @@ authors:
     given-names: "Chris"
     affiliation: "CTrees"
 repository-code: "https://github.com/ctrees-products/lulucf-frf-demo"
-url: "https://ctrees.org"
 # The code is MIT and the data tables in data/ are CC BY 4.0 (see LICENSE-data).
 # CFF reads a list of licenses as alternatives (OR), so only the code licence is
 # given here.
