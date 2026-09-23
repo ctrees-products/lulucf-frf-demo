@@ -1,0 +1,57 @@
+cff-version: 1.2.0
+message: "If you use this software or its data, please cite it using the metadata from this file."
+type: software
+title: "Forest carbon in the U.S. greenhouse gas inventory: an independent, open reproduction"
+abstract: >-
+  Per-state forest carbon flux estimates with confidence intervals, produced
+  independently of the U.S. federal greenhouse gas inventory. Includes
+  notebooks that compare them against the published Forest Service estimates,
+  so anyone can check the agreement themselves.
+authors:
+  - family-names: "Mihiar"
+    given-names: "Chris"
+    affiliation: "CTrees"
+repository-code: "https://github.com/ctrees-products/lulucf-frf-demo"
+url: "https://ctrees.org"
+# The code is MIT and the data tables in data/ are CC BY 4.0 (see LICENSE-data).
+# CFF reads a list of licenses as alternatives (OR), so only the code licence is
+# given here.
+license: MIT
+date-released: "2026-07-31"
+keywords:
+  - forest-carbon
+  - greenhouse-gas-inventory
+  - lulucf
+  - forest-inventory
+  - fia
+  - carbon-accounting
+  - reproducible-research
+  - open-science
+references:
+  - type: data
+    title: "Greenhouse gas emissions and removals from forest land, woodlands, urban trees, and harvested wood products in the United States, 1990–2023: Estimates and quantitative uncertainty for individual states, regional ownerships, National Forests, and Tribal ownership"
+    authors:
+      - family-names: "Walters"
+        given-names: "B.F."
+      - family-names: "Domke"
+        given-names: "G.M."
+      - family-names: "Greenfield"
+        given-names: "E.J."
+      - family-names: "Smith"
+        given-names: "J.E."
+      - family-names: "Ogle"
+        given-names: "S.M."
+      - family-names: "Knott"
+        given-names: "J.A."
+    year: 2026
+    publisher:
+      name: "Forest Service Research Data Archive"
+      city: "Fort Collins"
+      region: "CO"
+    doi: "10.2737/RDS-2026-0031"
+  - type: software
+    title: "pyfia"
+    authors:
+      - family-names: "Mihiar"
+        given-names: "Chris"
+    url: "https://github.com/mihiarc/pyfia"
